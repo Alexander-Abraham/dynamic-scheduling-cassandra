@@ -1,0 +1,29 @@
+CREATE KEYSPACE IF NOT EXISTS main WITH REPLICATION = { 'class' : 'SimpleStrategy','replication_factor' : 1};
+
+CREATE TABLE IF NOT EXISTS main.calendars (name text, serializedObject blob, PRIMARY KEY (name));
+
+CREATE TABLE IF NOT EXISTS main.jobs ( keyName text, keyGroup text, keyGroup_index text, jobId text, jobDescription text, jobClass text, durability boolean, requestsRecovery boolean, jobData text, jobDataPlain text, PRIMARY KEY ((keyGroup), keyName, jobId));
+CREATE CUSTOM INDEX IF NOT EXISTS jobs_keyGroup_contains ON main.jobs (keyGroup_index) USING 'org.apache.cassandra.index.sasi.SASIIndex' WITH OPTIONS = { 'mode': 'CONTAINS' };
+	
+CREATE CUSTOM INDEX IF NOT EXISTS jobs_jobId ON main.jobs (jobId) USING 'org.apache.cassandra.index.sasi.SASIIndex';
+
+CREATE TABLE IF NOT EXISTS main.locks ( keyName text, keyGroup text, keyGroup_index text, type text, instanceId text, time timestamp, PRIMARY KEY ((keyGroup), keyName, type));
+
+CREATE CUSTOM INDEX IF NOT EXISTS locks_instanceId ON main.locks (instanceId) USING 'org.apache.cassandra.index.sasi.SASIIndex';
+
+CREATE CUSTOM INDEX IF NOT EXISTS locks_keyGroup_contains ON main.locks (keyGroup_index) USING 'org.apache.cassandra.index.sasi.SASIIndex' WITH OPTIONS = { 'mode': 'CONTAINS' };
+
+CREATE TABLE IF NOT EXISTS main.paused_job_groups ( keyGroup text, keyGroup_index text, PRIMARY KEY (keyGroup));
+
+CREATE CUSTOM INDEX IF NOT EXISTS paused_job_groups_keyGroup_contains ON main.paused_job_groups (keyGroup_index) USING 'org.apache.cassandra.index.sasi.SASIIndex' WITH OPTIONS = { 'mode': 'CONTAINS' };
+
+CREATE TABLE IF NOT EXISTS main.paused_trigger_groups ( keyGroup text, keyGroup_index text, PRIMARY KEY (keyGroup));
+
+CREATE CUSTOM INDEX IF NOT EXISTS paused_trigger_groups_keyGroup_contains ON main.paused_trigger_groups (keyGroup_index) USING 'org.apache.cassandra.index.sasi.SASIIndex' WITH OPTIONS = { 'mode': 'CONTAINS' };
+
+CREATE TABLE IF NOT EXISTS main.schedulers ( schedulerName text, instanceId text, lastCheckinTime bigint, checkinInterval bigint, PRIMARY KEY (schedulerName, instanceId));
+
+CREATE TABLE IF NOT EXISTS main.triggers ( keyName text, keyGroup text, keyGroup_index text, state text, class text, calendarName text, description text, jobId text, jobData text, jobDataPlain text, priority int, startTime timestamp, endTime timestamp, cronExpression text, fireInstanceId text, previousFireTime timestamp, nextFireTime timestamp, finalFireTime timestamp, misfireInstruction int, repeatIntervalUnit text, repeatInterval bigint, timesTriggered int, timezone text, startTimeOfDay bigint, endTimeOfDay bigint, repeatCount int, PRIMARY KEY ((keyGroup), keyName));
+
+CREATE CUSTOM INDEX IF NOT EXISTS triggers_keyGroup_contains ON main.triggers (keyGroup_index)	USING 'org.apache.cassandra.index.sasi.SASIIndex'	WITH OPTIONS = { 'mode': 'CONTAINS' };	
+CREATE CUSTOM INDEX IF NOT EXISTS triggers_jobId ON main.triggers (jobId)	USING 'org.apache.cassandra.index.sasi.SASIIndex';
