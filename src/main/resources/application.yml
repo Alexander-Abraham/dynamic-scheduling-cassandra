@@ -1,0 +1,44 @@
+spring:
+  data:
+    cassandra:
+      keyspace-name: main
+      username: PLpIsTWrapYOYDbQtUAthjLr
+      password: 
+      schema-action: create-if-not-exists
+      request:
+        timeout: 10s
+      connection:
+        connect-timeout: 10s
+        init-query-timeout: 10s
+  application:
+    name: dynamicscheduler
+server:
+  servlet:
+    context-path: /dynamicscheduler
+     
+
+datastax.astra:
+  secure-connect-bundle: secure-connect-mydatabase.zip
+astra:
+  db:
+    id: 15a5cc0e-2924-4e34-afad-980eb9f3d727-1
+    region: us-east1
+    keyspace: main
+    application.token: 
+      
+spring.quartz.job-store-type: jdbc
+
+org.quartz.jobStore.misfireThreshold: 1000
+org.quartz.jobStore.class: com.inovaworkscc.quartz.cassandra.CassandraJobStore
+org.quartz.jobStore.dbName: main
+org.quartz.jobStore.contactPoint: 146.112.12.15,146.112.12.32
+org.quartz.jobStore.port: 29080
+org.quartz.scheduler.instanceName: TestName
+
+
+#org.quartz.threadPool.threadCount: 1
+#org.quartz.threadPool.threadCount: 3
+#org.quartz.jobStore.useProperties: true
+#org.quartz.jobStore.tablePrefix: QRTZ_   
+
+      
